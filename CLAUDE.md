@@ -1,0 +1,1 @@
+- Frontend should be on port 3002. Backend should be on port 8002.

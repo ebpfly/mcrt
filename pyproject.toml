@@ -1,0 +1,102 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mcrt"
+version = "0.1.0"
+description = "Interactive Monte Carlo radiative transfer simulator for particulate materials"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Eric" }
+]
+keywords = [
+    "monte carlo",
+    "radiative transfer",
+    "mie scattering",
+    "optical properties",
+    "particulate media",
+    "reflectance",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "PyMieScatt>=1.8",
+    "pyyaml>=6.0",
+    "pydantic>=2.0",
+    "h5py>=3.8",
+]
+
+[project.optional-dependencies]
+web = [
+    "fastapi>=0.100",
+    "uvicorn>=0.23",
+    "sse-starlette>=1.6",
+    "python-multipart>=0.0.6",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "pytest-asyncio>=0.21",
+    "httpx>=0.25",
+    "ruff>=0.1",
+    "mypy>=1.0",
+]
+all = [
+    "mcrt[web,dev]",
+]
+
+[project.scripts]
+mcrt = "mcrt.cli:main"
+
+[project.urls]
+Repository = "https://github.com/eric/mcrt"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mcrt"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["src"]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # Pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["mcrt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-v --tb=short"
+asyncio_mode = "auto"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true

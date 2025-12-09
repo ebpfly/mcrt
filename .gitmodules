@@ -1,0 +1,6 @@
+[submodule "fos"]
+	path = fos
+	url = https://github.com/FastOpticalSpectrum/FOS.git
+[submodule "refractiveindex-database"]
+	path = refractiveindex-database
+	url = https://github.com/polyanskiy/refractiveindex.info-database.git

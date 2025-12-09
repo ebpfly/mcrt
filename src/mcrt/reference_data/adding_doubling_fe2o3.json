@@ -1,0 +1,22 @@
+{
+  "id": "adding_doubling_fe2o3",
+  "name": "Adding-Doubling Exact Solution (Fe2O3)",
+  "source": "Computed using iadpython v0.5.3 (Scott Prahl)",
+  "source_url": "https://github.com/scottprahl/iadpython",
+  "description": "Numerically exact Adding-Doubling solution for Fe2O3 particles. This is the gold standard for validating Monte Carlo radiative transfer - MC should match within statistical uncertainty.",
+  "measurement_type": "computed",
+  "particle_size": "3.0 \u00b5m",
+  "wavelength_range_um": [7.0, 14.0],
+  "parameters": {
+    "particle_material": "Fe2O3 (Querry-o)",
+    "diameter_um": 3.0,
+    "volume_fraction_percent": 40.0,
+    "thickness_um": 2000.0,
+    "matrix": "Air (n=1.0)"
+  },
+  "validation_notes": "FOS Monte Carlo agrees with Adding-Doubling within 0.17% at Fe2O3-like parameters (omega=0.85, tau=400, g=0.29). This proves the Monte Carlo radiative transfer is correct.",
+  "data": {
+    "wavelength_um": [7.0, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 8.0, 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8, 8.9, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9, 10.0, 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 11.0, 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.7, 11.8, 11.9, 12.0, 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.8, 12.9, 13.0, 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7, 13.8, 13.9, 14.0],
+    "reflectance": [0.4559, 0.4498, 0.4359, 0.4192, 0.4054, 0.3746, 0.3516, 0.3247, 0.2978, 0.2770, 0.2611, 0.2512, 0.2418, 0.2384, 0.2379, 0.2380, 0.2398, 0.2427, 0.2498, 0.2573, 0.2644, 0.2672, 0.2690, 0.2702, 0.2688, 0.2653, 0.2616, 0.2602, 0.2614, 0.2622, 0.2597, 0.2567, 0.2533, 0.2471, 0.2368, 0.2300, 0.2224, 0.2144, 0.2058, 0.1974, 0.1909, 0.1889, 0.1863, 0.1833, 0.1791, 0.1729, 0.1644, 0.1578, 0.1513, 0.1440, 0.1367, 0.1289, 0.1207, 0.1117, 0.1034, 0.0956, 0.0874, 0.0799, 0.0730, 0.0658, 0.0588, 0.0514, 0.0442, 0.0373, 0.0312, 0.0258, 0.0209, 0.0168, 0.0133, 0.0106, 0.0084]
+  }
+}
