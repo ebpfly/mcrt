@@ -62,10 +62,30 @@ all = [
 mcrt = "mcrt.cli:main"
 
 [project.urls]
-Repository = "https://github.com/eric/mcrt"
+Repository = "https://github.com/ebpfly/mcrt"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mcrt"]
+
+[tool.hatch.build.targets.wheel.sources]
+"src" = ""
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/README.md",
+    "/pyproject.toml",
+]
+
+# Include package data (reference data JSON files)
+[tool.hatch.build.targets.wheel.shared-data]
+
+[tool.hatch.build]
+include = [
+    "src/mcrt/**/*.py",
+    "src/mcrt/**/*.json",
+]
 
 [tool.ruff]
 target-version = "py310"

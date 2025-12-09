@@ -51,6 +51,9 @@ htmlcov/
 # Work directory (simulation states, temp files)
 .mcrt_work/
 
+# Test installation directory
+.test_install/
+
 # OS files
 .DS_Store
 Thumbs.db
