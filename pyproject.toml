@@ -54,6 +54,7 @@ dev = [
     "httpx>=0.25",
     "ruff>=0.1",
     "mypy>=1.0",
+    "tmm>=0.2.0",  # Reference TMM implementation for validation
 ]
 all = [
     "mcrt[web,dev]",
