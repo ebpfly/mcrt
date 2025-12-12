@@ -147,14 +147,14 @@ export default function MaterialSelector() {
       <Autocomplete
         size="small"
         options={filteredMaterials}
-        getOptionLabel={(option) => option.name}
+        getOptionLabel={(option) => option.name.replace(/<[^>]*>/g, '')}
         value={getSelectedMaterial('particle', 1)}
         onChange={(_, value) => handleSelectMaterial('particle', 1, value)}
         renderInput={(params) => <TextField {...params} placeholder="Select particle material" />}
         renderOption={(props, option) => (
-          <li {...props}>
+          <li {...props} key={option.material_id}>
             <Box>
-              <Typography variant="body2">{option.name}</Typography>
+              <Typography variant="body2" dangerouslySetInnerHTML={{ __html: option.name }} />
               <Typography variant="caption" color="text.secondary">
                 {option.shelf}/{option.book}
               </Typography>
@@ -183,14 +183,14 @@ export default function MaterialSelector() {
       <Autocomplete
         size="small"
         options={filteredMaterials}
-        getOptionLabel={(option) => option.name}
+        getOptionLabel={(option) => option.name.replace(/<[^>]*>/g, '')}
         value={getSelectedMaterial('matrix', 1)}
         onChange={(_, value) => handleSelectMaterial('matrix', 1, value)}
         renderInput={(params) => <TextField {...params} placeholder="Select matrix material" />}
         renderOption={(props, option) => (
-          <li {...props}>
+          <li {...props} key={option.material_id}>
             <Box>
-              <Typography variant="body2">{option.name}</Typography>
+              <Typography variant="body2" dangerouslySetInnerHTML={{ __html: option.name }} />
               <Typography variant="caption" color="text.secondary">
                 {option.shelf}/{option.book}
               </Typography>

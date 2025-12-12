@@ -44,7 +44,7 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   const menuItems = [
-    { text: 'Simulation', icon: <ScienceIcon />, path: '/simulation' },
+    { text: 'Particles', icon: <ScienceIcon />, path: '/simulation' },
     { text: 'Thin Film', icon: <LayersIcon />, path: '/thinfilm' },
     { text: 'Comparison', icon: <CompareIcon />, path: '/comparison' },
     { text: 'Documentation', icon: <DocsIcon />, path: '/docs' },
