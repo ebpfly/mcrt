@@ -22,6 +22,7 @@ import {
   MenuBook as DocsIcon,
   CheckCircle as HealthyIcon,
   Error as ErrorIcon,
+  Layers as LayersIcon,
 } from '@mui/icons-material';
 import { useAppSelector } from '../store';
 
@@ -44,6 +45,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const menuItems = [
     { text: 'Simulation', icon: <ScienceIcon />, path: '/simulation' },
+    { text: 'Thin Film', icon: <LayersIcon />, path: '/thinfilm' },
     { text: 'Comparison', icon: <CompareIcon />, path: '/comparison' },
     { text: 'Documentation', icon: <DocsIcon />, path: '/docs' },
   ];

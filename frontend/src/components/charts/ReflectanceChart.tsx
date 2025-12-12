@@ -12,7 +12,7 @@ import {
   Filler,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { SimulationResults, SavedRun, OpticalConstants } from '../../types';
+import { SimulationResults, SavedRun } from '../../types';
 
 ChartJS.register(
   CategoryScale,

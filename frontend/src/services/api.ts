@@ -5,6 +5,8 @@ import {
   OpticalConstants,
   SimulationConfig,
   SimulationSession,
+  ThinFilmConfig,
+  ThinFilmResults,
 } from '../types';
 
 const API_BASE = '/api/v1';
@@ -183,6 +185,13 @@ class APIService {
     };
   }> {
     const response = await this.client.get(`/reference/${referenceId}`);
+    return response.data;
+  }
+
+  // === Thin Film ===
+
+  async calculateThinFilm(config: ThinFilmConfig): Promise<ThinFilmResults> {
+    const response = await this.client.post<ThinFilmResults>('/thinfilm/calculate', config);
     return response.data;
   }
 }

@@ -203,3 +203,53 @@ class HealthResponse(BaseModel):
     fos_available: bool
     database_available: bool
     active_sessions: int
+
+
+# === Thin Film Models ===
+
+
+class ThinFilmLayerRequest(BaseModel):
+    """A single thin film layer configuration."""
+
+    thickness_nm: float = Field(gt=0, description="Layer thickness in nanometers")
+    material_id: str = Field(description="Material ID from database")
+
+
+class ThinFilmLayerInlineRequest(BaseModel):
+    """A single thin film layer with inline optical constants."""
+
+    thickness_nm: float = Field(gt=0, description="Layer thickness in nanometers")
+    n: list[float] = Field(description="Refractive index (real part)")
+    k: list[float] = Field(description="Refractive index (imaginary part)")
+
+
+class ThinFilmRequest(BaseModel):
+    """Request to calculate thin film reflectance/transmittance."""
+
+    wavelength_um: list[float] = Field(description="Wavelength array in micrometers")
+    layers: list[ThinFilmLayerInlineRequest] = Field(
+        description="List of thin film layers (top to bottom)"
+    )
+    substrate_n: list[float] = Field(description="Substrate refractive index (real part)")
+    substrate_k: list[float] = Field(description="Substrate refractive index (imaginary part)")
+    incident_n: list[float] | None = Field(
+        default=None, description="Incident medium n (default: 1.0 = air)"
+    )
+    incident_k: list[float] | None = Field(
+        default=None, description="Incident medium k (default: 0.0 = transparent)"
+    )
+    angle_deg: float = Field(default=0.0, ge=0, lt=90, description="Angle of incidence in degrees")
+    polarization: Literal["s", "p", "unpolarized"] = Field(
+        default="unpolarized", description="Polarization state"
+    )
+
+
+class ThinFilmResponse(BaseModel):
+    """Response from thin film calculation."""
+
+    wavelength_um: list[float]
+    reflectance: list[float]
+    transmittance: list[float]
+    absorptance: list[float]
+    angle_deg: float
+    polarization: str

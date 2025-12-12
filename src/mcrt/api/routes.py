@@ -23,6 +23,8 @@ from mcrt.api.models import (
     SimulationSessionResponse,
     SimulationStatusEnum,
     StateImportResponse,
+    ThinFilmRequest,
+    ThinFilmResponse,
 )
 from mcrt.api.sse import SSEManager, create_sse_response
 from mcrt.fos.wrapper import FOSWrapper
@@ -585,3 +587,56 @@ async def get_reference_data(reference_id: str):
         data = json.load(f)
 
     return data
+
+
+# === Thin Film Endpoints ===
+
+
+@router.post("/thinfilm/calculate", response_model=ThinFilmResponse)
+async def calculate_thin_film(request: ThinFilmRequest):
+    """Calculate thin film reflectance/transmittance using Transfer Matrix Method.
+
+    This endpoint computes the optical response of multilayer thin films on a substrate.
+    Useful for modeling coatings, anti-reflection films, and layered structures.
+
+    The stack is defined from top (incident side) to bottom (substrate):
+    - Incident medium (air by default)
+    - Layer 0 (topmost thin film)
+    - Layer 1
+    - ...
+    - Substrate (semi-infinite)
+    """
+    from mcrt.thinfilm import calculate_thin_film as tmm_calculate
+
+    try:
+        # Convert request layers to TMM format
+        layers = [
+            {
+                "thickness_nm": layer.thickness_nm,
+                "n": np.array(layer.n),
+                "k": np.array(layer.k),
+            }
+            for layer in request.layers
+        ]
+
+        result = tmm_calculate(
+            wavelength_um=np.array(request.wavelength_um),
+            layers=layers,
+            substrate_n=np.array(request.substrate_n),
+            substrate_k=np.array(request.substrate_k),
+            incident_n=np.array(request.incident_n) if request.incident_n else None,
+            incident_k=np.array(request.incident_k) if request.incident_k else None,
+            angle_deg=request.angle_deg,
+            polarization=request.polarization,
+        )
+
+        return ThinFilmResponse(
+            wavelength_um=result.wavelength_um.tolist(),
+            reflectance=result.reflectance.tolist(),
+            transmittance=result.transmittance.tolist(),
+            absorptance=result.absorptance.tolist(),
+            angle_deg=result.angle_deg,
+            polarization=result.polarization,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

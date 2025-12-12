@@ -11,6 +11,7 @@ from mcrt.fos.wrapper import FOSWrapper
 from mcrt.fos.output_parser import FOSResult
 from mcrt.materials.database import MaterialDatabase, OpticalConstants, get_common_material
 from mcrt.materials.custom import CustomMaterial
+from mcrt.thinfilm import ThinFilmStack, ThinFilmResult, Layer, calculate_thin_film
 
 __all__ = [
     "__version__",
@@ -20,4 +21,9 @@ __all__ = [
     "OpticalConstants",
     "CustomMaterial",
     "get_common_material",
+    # Thin film
+    "ThinFilmStack",
+    "ThinFilmResult",
+    "Layer",
+    "calculate_thin_film",
 ]

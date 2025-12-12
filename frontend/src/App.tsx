@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import SimulationPage from './pages/SimulationPage';
 import ComparisonPage from './pages/ComparisonPage';
 import DocumentationPage from './pages/DocumentationPage';
+import ThinFilmPage from './pages/ThinFilmPage';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -68,6 +69,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/simulation" replace />} />
             <Route path="/simulation" element={<SimulationPage />} />
+            <Route path="/thinfilm" element={<ThinFilmPage />} />
             <Route path="/comparison" element={<ComparisonPage />} />
             <Route path="/docs" element={<DocumentationPage />} />
           </Routes>

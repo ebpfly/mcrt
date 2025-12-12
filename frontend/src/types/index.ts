@@ -122,3 +122,31 @@ export interface SavedRun {
   results: SimulationResults;
   timestamp: string;
 }
+
+// === Thin Film Types ===
+
+export interface ThinFilmLayer {
+  thickness_nm: number;
+  n: number[];
+  k: number[];
+}
+
+export interface ThinFilmConfig {
+  wavelength_um: number[];
+  layers: ThinFilmLayer[];
+  substrate_n: number[];
+  substrate_k: number[];
+  incident_n?: number[];
+  incident_k?: number[];
+  angle_deg: number;
+  polarization: 's' | 'p' | 'unpolarized';
+}
+
+export interface ThinFilmResults {
+  wavelength_um: number[];
+  reflectance: number[];
+  transmittance: number[];
+  absorptance: number[];
+  angle_deg: number;
+  polarization: string;
+}
