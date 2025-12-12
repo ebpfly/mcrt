@@ -273,14 +273,14 @@ export default function ThinFilmPage() {
                 <Autocomplete
                   size="small"
                   options={materials}
-                  getOptionLabel={(option) => option.name}
+                  getOptionLabel={(option) => option.name.replace(/<[^>]*>/g, '')}
                   value={substrateMaterial}
                   onChange={(_, value) => updateSubstrateMaterial(value)}
                   renderInput={(params) => <TextField {...params} label="Substrate Material" />}
                   renderOption={(props, option) => (
                     <li {...props} key={option.material_id}>
                       <Box>
-                        <Typography variant="body2">{option.name}</Typography>
+                        <Typography variant="body2" dangerouslySetInnerHTML={{ __html: option.name }} />
                         <Typography variant="caption" color="text.secondary">
                           {option.shelf}/{option.book}
                         </Typography>
@@ -324,14 +324,14 @@ export default function ThinFilmPage() {
                         <Autocomplete
                           size="small"
                           options={materials}
-                          getOptionLabel={(option) => option.name}
+                          getOptionLabel={(option) => option.name.replace(/<[^>]*>/g, '')}
                           value={layer.material}
                           onChange={(_, value) => updateLayerMaterial(layer.id, value)}
                           renderInput={(params) => <TextField {...params} label="Material" />}
                           renderOption={(props, option) => (
                             <li {...props} key={option.material_id}>
                               <Box>
-                                <Typography variant="body2">{option.name}</Typography>
+                                <Typography variant="body2" dangerouslySetInnerHTML={{ __html: option.name }} />
                                 <Typography variant="caption" color="text.secondary">
                                   {option.shelf}/{option.book}
                                 </Typography>
