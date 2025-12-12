@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   Box,
   Grid,
@@ -28,6 +28,11 @@ import { useAppSelector } from '../store';
 import { MaterialInfo, ThinFilmResults, OpticalConstants, SimulationResults } from '../types';
 import ReflectanceChart from '../components/charts/ReflectanceChart';
 
+// Default materials for LWIR validation case
+const DEFAULT_SUBSTRATE_ID = 'main/ZnSe/Connolly'; // ZnSe 0.54-18.2 µm
+const DEFAULT_LAYER_ID = 'main/SiO2/Kischkat';     // SiO2 1.54-14.3 µm (shows phonon band at ~9 µm)
+const DEFAULT_LAYER_THICKNESS = 500; // nm
+
 interface LayerState {
   id: string;
   thickness_nm: number;
@@ -40,17 +45,55 @@ export default function ThinFilmPage() {
 
   // Layer configuration
   const [layers, setLayers] = useState<LayerState[]>([
-    { id: '1', thickness_nm: 100, material: null, opticalConstants: null },
+    { id: '1', thickness_nm: DEFAULT_LAYER_THICKNESS, material: null, opticalConstants: null },
   ]);
 
   // Substrate configuration
   const [substrateMaterial, setSubstrateMaterial] = useState<MaterialInfo | null>(null);
   const [substrateOC, setSubstrateOC] = useState<OpticalConstants | null>(null);
 
-  // Wavelength configuration
-  const [wavelengthStart, setWavelengthStart] = useState(0.4);
-  const [wavelengthEnd, setWavelengthEnd] = useState(0.8);
-  const [wavelengthInterval, setWavelengthInterval] = useState(0.004); // 4nm default
+  // Wavelength configuration - LWIR range
+  const [wavelengthStart, setWavelengthStart] = useState(7.0);
+  const [wavelengthEnd, setWavelengthEnd] = useState(14.0);
+  const [wavelengthInterval, setWavelengthInterval] = useState(0.05); // 50nm default
+
+  // Track if defaults have been loaded
+  const [defaultsLoaded, setDefaultsLoaded] = useState(false);
+
+  // Load default materials on startup
+  useEffect(() => {
+    const loadDefaults = async () => {
+      if (defaultsLoaded || materials.length === 0) return;
+      if (substrateMaterial || layers[0].material) {
+        setDefaultsLoaded(true);
+        return;
+      }
+
+      try {
+        // Find default materials in the list
+        const substrateMat = materials.find((m) => m.material_id === DEFAULT_SUBSTRATE_ID);
+        const layerMat = materials.find((m) => m.material_id === DEFAULT_LAYER_ID);
+
+        if (substrateMat) {
+          const oc = await api.getMaterial(substrateMat.material_id);
+          setSubstrateMaterial(substrateMat);
+          setSubstrateOC(oc);
+        }
+
+        if (layerMat) {
+          const oc = await api.getMaterial(layerMat.material_id);
+          setLayers([{ id: '1', thickness_nm: DEFAULT_LAYER_THICKNESS, material: layerMat, opticalConstants: oc }]);
+        }
+
+        setDefaultsLoaded(true);
+      } catch (error) {
+        console.error('Failed to load default materials:', error);
+        setDefaultsLoaded(true);
+      }
+    };
+
+    loadDefaults();
+  }, [materials, substrateMaterial, layers, defaultsLoaded]);
 
   // Angle and polarization
   const [angleDeg, setAngleDeg] = useState(0);
