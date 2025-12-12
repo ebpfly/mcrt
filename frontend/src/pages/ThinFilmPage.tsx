@@ -50,7 +50,7 @@ export default function ThinFilmPage() {
   // Wavelength configuration
   const [wavelengthStart, setWavelengthStart] = useState(0.4);
   const [wavelengthEnd, setWavelengthEnd] = useState(0.8);
-  const wavelengthPoints = 100;
+  const [wavelengthInterval, setWavelengthInterval] = useState(0.004); // 4nm default
 
   // Angle and polarization
   const [angleDeg, setAngleDeg] = useState(0);
@@ -61,15 +61,17 @@ export default function ThinFilmPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Calculate number of wavelength points
+  const nWavelengths = Math.floor((wavelengthEnd - wavelengthStart) / wavelengthInterval) + 1;
+
   // Generate wavelength array
   const generateWavelengths = useCallback(() => {
     const wavelengths: number[] = [];
-    const step = (wavelengthEnd - wavelengthStart) / (wavelengthPoints - 1);
-    for (let i = 0; i < wavelengthPoints; i++) {
-      wavelengths.push(wavelengthStart + i * step);
+    for (let wl = wavelengthStart; wl <= wavelengthEnd; wl += wavelengthInterval) {
+      wavelengths.push(wl);
     }
     return wavelengths;
-  }, [wavelengthStart, wavelengthEnd, wavelengthPoints]);
+  }, [wavelengthStart, wavelengthEnd, wavelengthInterval]);
 
   // Add layer
   const addLayer = () => {
@@ -358,6 +360,21 @@ export default function ThinFilmPage() {
                 <Typography variant="h6" gutterBottom>
                   Wavelength Range
                 </Typography>
+                <Box sx={{ px: 1, mb: 2 }}>
+                  <Slider
+                    value={[wavelengthStart, wavelengthEnd]}
+                    onChange={(_, v) => {
+                      const [start, end] = v as number[];
+                      setWavelengthStart(start);
+                      setWavelengthEnd(end);
+                    }}
+                    min={0.3}
+                    max={16.0}
+                    step={0.1}
+                    valueLabelDisplay="auto"
+                    valueLabelFormat={(v) => `${v.toFixed(1)} μm`}
+                  />
+                </Box>
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <TextField
@@ -367,7 +384,7 @@ export default function ThinFilmPage() {
                       type="number"
                       value={wavelengthStart}
                       onChange={(e) => setWavelengthStart(parseFloat(e.target.value) || 0.4)}
-                      inputProps={{ step: 0.1 }}
+                      inputProps={{ step: 0.01 }}
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -378,10 +395,36 @@ export default function ThinFilmPage() {
                       type="number"
                       value={wavelengthEnd}
                       onChange={(e) => setWavelengthEnd(parseFloat(e.target.value) || 0.8)}
-                      inputProps={{ step: 0.1 }}
+                      inputProps={{ step: 0.01 }}
                     />
                   </Grid>
                 </Grid>
+
+                <Typography variant="subtitle2" sx={{ mt: 2 }} gutterBottom>
+                  Wavelength Interval
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Slider
+                    value={wavelengthInterval * 1000}
+                    min={1}
+                    max={100}
+                    step={1}
+                    onChange={(_, v) => setWavelengthInterval((v as number) / 1000)}
+                    sx={{ flexGrow: 1 }}
+                  />
+                  <TextField
+                    size="small"
+                    type="number"
+                    value={Math.round(wavelengthInterval * 1000)}
+                    onChange={(e) => setWavelengthInterval(Number(e.target.value) / 1000)}
+                    inputProps={{ step: 1 }}
+                    sx={{ width: 100 }}
+                  />
+                  <Typography variant="body2" color="text.secondary">nm</Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                  {nWavelengths} wavelength points
+                </Typography>
               </CardContent>
             </Card>
 
