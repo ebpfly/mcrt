@@ -260,10 +260,12 @@ export default function SimulationPage() {
                         color="primary"
                         startIcon={<PlayIcon />}
                         onClick={handleStartSimulation}
-                        disabled={isLoading}
+                        disabled={isLoading || Object.keys(medium.particleMaterials).length === 0 || Object.keys(medium.matrixMaterials).length === 0}
                         fullWidth
                       >
-                        Start Simulation
+                        {Object.keys(medium.particleMaterials).length === 0 || Object.keys(medium.matrixMaterials).length === 0
+                          ? 'Loading Materials...'
+                          : 'Start Simulation'}
                       </Button>
                     ) : isRunning ? (
                       <Button
