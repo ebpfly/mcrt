@@ -655,3 +655,125 @@ def get_common_material(name: str, db: MaterialDatabase | None = None) -> Optica
 
     material_id = COMMON_MINERALS[name.lower()]
     return db.get_optical_constants(material_id)
+
+
+class CombinedMaterialDatabase:
+    """Unified interface combining multiple optical constants databases.
+
+    This class aggregates MaterialDatabase (refractiveindex.info) and
+    JenaDatabase (cosmic dust) into a single interface.
+    """
+
+    def __init__(
+        self,
+        refractiveindex_path: str | Path | None = None,
+        jena_path: str | Path | None = None,
+    ):
+        """Initialize combined database.
+
+        Args:
+            refractiveindex_path: Path to refractiveindex.info database
+            jena_path: Path to Jena database directory
+        """
+        self._databases: dict[str, MaterialDatabase] = {}
+
+        # Try to load refractiveindex.info database
+        try:
+            self._ri_db = MaterialDatabase(db_path=refractiveindex_path)
+            self._databases["refractiveindex"] = self._ri_db
+        except FileNotFoundError:
+            self._ri_db = None
+            print("Warning: refractiveindex.info database not found")
+
+        # Try to load Jena database
+        try:
+            from .jena_database import JenaDatabase
+            self._jena_db = JenaDatabase(db_path=jena_path)
+            self._databases["jena"] = self._jena_db
+        except FileNotFoundError:
+            self._jena_db = None
+            print("Warning: Jena database not found")
+
+    def list_materials(
+        self,
+        shelf: str | None = None,
+        search: str | None = None,
+    ) -> list[MaterialInfo]:
+        """List available materials from all databases.
+
+        Args:
+            shelf: Filter by shelf (main, organic, glass, jena, etc.)
+            search: Search string to filter by name
+
+        Returns:
+            List of MaterialInfo objects
+        """
+        results = []
+
+        # Get materials from refractiveindex.info
+        if self._ri_db:
+            results.extend(self._ri_db.list_materials(shelf=shelf, search=search))
+
+        # Get materials from Jena (shelf="jena")
+        if self._jena_db:
+            if shelf is None or shelf == "jena":
+                # For Jena, translate material_class to book
+                jena_materials = self._jena_db.list_materials(search=search)
+                results.extend(jena_materials)
+
+        return sorted(results, key=lambda m: m.name)
+
+    def list_shelves(self) -> list[str]:
+        """List available shelves (categories) from all databases."""
+        shelves = set()
+
+        if self._ri_db:
+            shelves.update(self._ri_db.list_shelves())
+
+        if self._jena_db:
+            shelves.add("jena")
+
+        return sorted(shelves)
+
+    def get_material_info(self, material_id: str) -> MaterialInfo:
+        """Get information about a material.
+
+        Args:
+            material_id: Material identifier (prefix determines database)
+                        - "jena/..." -> Jena database
+                        - other -> refractiveindex.info
+
+        Returns:
+            MaterialInfo object
+        """
+        if material_id.startswith("jena/"):
+            if self._jena_db is None:
+                raise KeyError(f"Jena database not available for: {material_id}")
+            return self._jena_db.get_material_info(material_id)
+        else:
+            if self._ri_db is None:
+                raise KeyError(f"RefractiveIndex database not available for: {material_id}")
+            return self._ri_db.get_material_info(material_id)
+
+    def get_optical_constants(
+        self,
+        material_id: str,
+        wavelength_range_um: tuple[float, float] | None = None,
+    ) -> OpticalConstants:
+        """Load optical constants for a material.
+
+        Args:
+            material_id: Material identifier (prefix determines database)
+            wavelength_range_um: Optional (min, max) wavelength range
+
+        Returns:
+            OpticalConstants object
+        """
+        if material_id.startswith("jena/"):
+            if self._jena_db is None:
+                raise KeyError(f"Jena database not available for: {material_id}")
+            return self._jena_db.get_optical_constants(material_id, wavelength_range_um)
+        else:
+            if self._ri_db is None:
+                raise KeyError(f"RefractiveIndex database not available for: {material_id}")
+            return self._ri_db.get_optical_constants(material_id, wavelength_range_um)

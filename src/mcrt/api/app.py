@@ -8,12 +8,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from mcrt.api.routes import router, init_dependencies
 from mcrt.fos.wrapper import FOSWrapper
-from mcrt.materials.database import MaterialDatabase
+from mcrt.materials.database import CombinedMaterialDatabase
 
 
 def create_app(
     fos_path: str | Path | None = None,
     db_path: str | Path | None = None,
+    jena_path: str | Path | None = None,
     work_dir: str | Path | None = None,
     cors_origins: list[str] | None = None,
 ) -> FastAPI:
@@ -22,6 +23,7 @@ def create_app(
     Args:
         fos_path: Path to FOS source directory
         db_path: Path to refractiveindex.info database
+        jena_path: Path to Jena/optool database
         work_dir: Working directory for simulation files
         cors_origins: Allowed CORS origins (default: localhost:3000, 5173)
 
@@ -66,15 +68,14 @@ def create_app(
         print(f"Warning: FOS not found: {e}")
         fos_wrapper = None
 
-    # Initialize material database
-    try:
-        material_db = MaterialDatabase(db_path=db_path)
-    except FileNotFoundError as e:
-        print(f"Warning: Material database not found: {e}")
-        material_db = None
+    # Initialize combined material database (refractiveindex.info + Jena)
+    material_db = CombinedMaterialDatabase(
+        refractiveindex_path=db_path,
+        jena_path=jena_path,
+    )
 
-    # Initialize dependencies
-    if fos_wrapper and material_db:
+    # Initialize dependencies (material_db is always available, may have both or one database)
+    if fos_wrapper:
         init_dependencies(fos_wrapper, material_db, work_dir)
 
     # Include routes
@@ -84,7 +85,8 @@ def create_app(
     async def startup():
         print("MCRT API starting up...")
         print(f"  FOS available: {fos_wrapper is not None}")
-        print(f"  Database available: {material_db is not None}")
+        print(f"  RefractiveIndex.info: {material_db._ri_db is not None}")
+        print(f"  Jena database: {material_db._jena_db is not None}")
         print(f"  Work directory: {work_dir}")
 
     @app.on_event("shutdown")
