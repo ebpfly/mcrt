@@ -25,7 +25,7 @@ def create_app(
         db_path: Path to refractiveindex.info database
         jena_path: Path to Jena/optool database
         work_dir: Working directory for simulation files
-        cors_origins: Allowed CORS origins (default: localhost:3000, 5173)
+        cors_origins: Allowed CORS origins (default: localhost:3003)
 
     Returns:
         Configured FastAPI application
@@ -41,10 +41,8 @@ def create_app(
     # Configure CORS
     if cors_origins is None:
         cors_origins = [
-            "http://localhost:3000",
-            "http://localhost:5173",
-            "http://127.0.0.1:3000",
-            "http://127.0.0.1:5173",
+            "http://localhost:3003",
+            "http://127.0.0.1:3003",
         ]
 
     app.add_middleware(
@@ -105,7 +103,7 @@ def main():
     import uvicorn
 
     host = os.environ.get("MCRT_HOST", "127.0.0.1")
-    port = int(os.environ.get("MCRT_PORT", "8000"))
+    port = int(os.environ.get("MCRT_PORT", "8003"))
 
     uvicorn.run(
         "mcrt.api.app:app",

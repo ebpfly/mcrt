@@ -19,7 +19,7 @@ def main():
         "--host", default="127.0.0.1", help="Host to bind to (default: 127.0.0.1)"
     )
     server_parser.add_argument(
-        "--port", type=int, default=8000, help="Port to bind to (default: 8000)"
+        "--port", type=int, default=8003, help="Port to bind to (default: 8003)"
     )
     server_parser.add_argument(
         "--reload", action="store_true", help="Enable auto-reload for development"

@@ -934,7 +934,7 @@ Thin layer           |  0.706  |     0.4  |  0.077  |  0.0875  |  0.0968  | 10.7
           Base URL
         </Typography>
         <Typography paragraph sx={{ fontFamily: 'monospace', bgcolor: 'grey.100', p: 1 }}>
-          http://localhost:8000/api/v1
+          http://localhost:8003/api/v1
         </Typography>
 
         <Typography variant="subtitle2" gutterBottom>
